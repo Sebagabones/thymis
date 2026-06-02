@@ -74,12 +74,12 @@ let
       disabledModules =
         [ "${modulesPath}/installer/sd-card/sd-image-aarch64.nix" ];
       # imports = [ inputs.raspberry-pi-nix.nixosModules.raspberry-pi ];
-      imports = with inputs.nixos-raspberrypi.nixosModules; [
+      imports = [
         # Hardware configuration
-        raspberry-pi-5.base
-        raspberry-pi-5.page-size-16k
-        raspberry-pi-5.display-vc4
-        trusted-nix-caches
+        inputs.nixos-raspberrypi.nixosModules.raspberry-pi-5.base
+        inputs.nixos-raspberrypi.nixosModules.raspberry-pi-5.page-size-16k
+        inputs.nixos-raspberrypi.nixosModules.raspberry-pi-5.display-vc4
+        inputs.nixos-raspberrypi.nixosModules.trusted-nix-caches
       ];
       systemd.watchdog.runtimeTime = "15s";
       # raspberry-pi-nix.libcamera-overlay.enable = false;

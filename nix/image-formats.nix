@@ -254,6 +254,7 @@ let
       in {
         imports = [
           inputs.nixos-generators.nixosModules.sd-aarch64
+          inputs.nixos-raspberrypi.nixosModules.sdImage
           "${inputs.raspberry-pi-nix}/sd-image/default.nix"
         ];
         sdImage.compressImage = false;
