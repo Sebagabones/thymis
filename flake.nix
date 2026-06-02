@@ -36,7 +36,8 @@
       [ "cache.thymis.io-1:pEeKkNXiK17TLKls0KM8cEp0NGy08gc5chAmCyuQo8M=" ];
   };
 
-  outputs = inputss@{ self, nixpkgs, home-manager, flake-utils, ... }:
+  outputs = inputss@{ self, nixpkgs, home-manager, flake-utils
+    , nixos-raspberrypi, ... }:
     let
       inputs = inputss // { thymis = self; };
       forAllSystems = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" ];
@@ -95,7 +96,7 @@
         specialArgs = { inherit inputs; };
       }).config.system.build.thymis-image-with-secrets-builder-aarch64;
 
-      thymis-controller-pi-5-sd-image = (nixpkgs.lib.nixosSystem {
+      thymis-controller-pi-5-sd-image = (nixos-raspberrypi.lib.nixosSystem {
         modules = [
           ({ config, pkgs, lib, nixos-raspberrypi, ... }: {
             imports = with nixos-raspberrypi.nixosModules; [
