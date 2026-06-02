@@ -37,7 +37,7 @@
         in
         {
           name = d.identifier;
-          value = inputs.nixos-raspberrypi.lib.nixosSystem {
+          value = nixpkgs.lib.nixosSystem {
             modules = device-modules
               ++ tag-modules
               ++ [
