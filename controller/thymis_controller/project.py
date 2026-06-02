@@ -50,6 +50,9 @@ else:
 BUILTIN_REPOSITORIES = {
     "thymis": thymis_repo,
     "nixpkgs": models.Repo(follows="thymis/nixpkgs"),
+    "nixos-raspberrypi": models.Repo(
+        url="github:nvmd/nixos-raspberrypi/main", follows="thymis/nixpkgs"
+    ),
 }
 
 HOST_PRIORITY = 80
