@@ -8,7 +8,7 @@
     nixos-generators.url = "github:nix-community/nixos-generators";
     nixos-generators.inputs.nixpkgs.follows = "nixpkgs";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
-    raspberry-pi-nix.url = "github:nix-community/raspberry-pi-nix";
+    # raspberry-pi-nix.url = "github:nix-community/raspberry-pi-nix";
     nixos-raspberrypi.url = "github:nvmd/nixos-raspberrypi/main";
     flake-utils.url = "github:numtide/flake-utils";
     pyproject-nix = {

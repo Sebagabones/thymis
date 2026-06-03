@@ -77,6 +77,8 @@ let
       imports = [
         # Hardware configuration
         inputs.nixos-raspberrypi.nixosModules.raspberry-pi-5.base
+        # inputs.nixos-raspberrypi.nixosModules.sd-image
+
         inputs.nixos-raspberrypi.nixosModules.raspberry-pi-5.page-size-16k
         inputs.nixos-raspberrypi.nixosModules.raspberry-pi-5.display-vc4
         inputs.nixos-raspberrypi.nixosModules.trusted-nix-caches
@@ -99,6 +101,34 @@ let
         })
       ];
       nixpkgs.hostPlatform = "aarch64-linux";
+      environment.systemPackages = with pkgs; [
+        i2c-tools
+        libraspberrypi
+        raspberrypi-eeprom
+        cachix
+      ];
+      system.nixos.tags = let cfg = config.boot.loader.raspberry-pi;
+      in [
+        "raspberry-pi-${cfg.variant}"
+        # cfg.bootloader
+        # config.boot.kernelPackages.kernel.version
+      ];
+      services.udev.extraRules = ''
+        # Ignore partitions with "Required Partition" GPT partition attribute
+        # On our RPis this is firmware (/boot/firmware) partition
+        ENV{ID_PART_ENTRY_SCHEME}=="gpt", \
+          ENV{ID_PART_ENTRY_FLAGS}=="0x1", \
+          ENV{UDISKS_IGNORE}="1"
+      '';
+
+      boot.initrd.availableKernelModules =
+        [ "usbhid" "xhci_pci" "usb_storage" ];
+      boot.initrd.kernelModules = [ ];
+      boot.kernelModules = [ ];
+      boot.extraModulePackages = [ ];
+      boot.loader.raspberry-pi.bootloader = "kernel";
+      boot.tmp.useTmpfs = true;
+      hardware.i2c.enable = true;
       hardware.raspberry-pi.config = {
         config = {
           all = {
@@ -188,18 +218,18 @@ let
           dtoverlay=vc4-kms-dsi-waveshare-panel,10_1_inch,dsi0
         '';
       };
-      hardware.graphics = {
-        enable = true;
-        extraPackages = [ pkgs.mesa.drivers ];
-      };
-      services.xserver.extraConfig = ''
-        Section "OutputClass"
-          Identifier "vc4"
-          MatchDriver "vc4"
-          Driver "modesetting"
-          Option "PrimaryGPU" "true"
-        EndSection
-      '';
+      # hardware.graphics = {
+      #   enable = true;
+      #   extraPackages = [ pkgs.mesa.drivers ];
+      # };
+      # services.xserver.extraConfig = ''
+      #   Section "OutputClass"
+      #     Identifier "vc4"
+      #     MatchDriver "vc4"
+      #     Driver "modesetting"
+      #     Option "PrimaryGPU" "true"
+      #   EndSection
+      # '';
       services.avahi = {
         enable = true;
         nssmdns4 = true;
