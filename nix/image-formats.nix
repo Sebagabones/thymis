@@ -250,7 +250,7 @@ let
         #         fi
         #       '';
         #     }) { };
-        sdImage = config.sdImage;
+        sdImage = config.sdImage { };
       in {
         imports = [
           inputs.nixos-generators.nixosModules.sd-aarch64
