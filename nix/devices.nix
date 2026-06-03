@@ -129,7 +129,7 @@ let
       boot.loader.raspberry-pi.bootloader = "kernel";
       boot.tmp.useTmpfs = true;
       hardware.i2c.enable = true;
-      hardware.raspberry-pi.config = {
+      hardware.raspberry-pi = {
         config = {
           all = {
             options = {
