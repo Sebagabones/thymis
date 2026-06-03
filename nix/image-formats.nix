@@ -231,7 +231,7 @@ let
                 # Create a FAT32 /boot/firmware partition of suitable size into firmware_part.img
                 eval $(partx $img -o START,SECTORS --nr 1 --pairs)
                 truncate -s $((SECTORS * 512)) firmware_part.img
-                faketime "1970-01-01 00:00:00" mkfs.vfat -i ${config.sdImage.firmwarePartitionID} -n ${config.raspberry-pi-nix.firmware-partition-label} firmware_part.img
+                faketime "1970-01-01 00:00:00" mkfs.vfat -i ${config.sdImage.firmwarePartitionID} -n FIRMWARE firmware_part.img
 
                 # Populate the files intended for /boot/firmware
                 mkdir firmware
