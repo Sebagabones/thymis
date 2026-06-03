@@ -78,10 +78,10 @@ let
         # Hardware configuration
         inputs.nixos-raspberrypi.nixosModules.raspberry-pi-5.base
         # inputs.nixos-raspberrypi.nixosModules.sd-image
-
         inputs.nixos-raspberrypi.nixosModules.raspberry-pi-5.page-size-16k
         inputs.nixos-raspberrypi.nixosModules.raspberry-pi-5.display-vc4
         inputs.nixos-raspberrypi.nixosModules.trusted-nix-caches
+
       ];
       systemd.watchdog.runtimeTime = "15s";
       # raspberry-pi-nix.libcamera-overlay.enable = false;

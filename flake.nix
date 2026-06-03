@@ -95,20 +95,8 @@
         ];
         specialArgs = { inherit inputs; };
       }).config.system.build.thymis-image-with-secrets-builder-aarch64;
-
-      thymis-controller-pi-5-sd-image = (nixos-raspberrypi.lib.nixosSystem {
+      thymis-controller-pi-5-sd-image = thymis-controller-pi-5-sd-image ({
         modules = [
-          ({ config, pkgs, lib, nixos-raspberrypi, ... }: {
-            imports = with nixos-raspberrypi.nixosModules; [
-              # Hardware configuration
-              raspberry-pi-5.base
-              raspberry-pi-5.page-size-16k
-              raspberry-pi-5.display-vc4
-              trusted-nix-caches
-              nixos-raspberrypi.lib.inject-overlays
-              nixos-raspberrypi.lib.inject-overlays-global
-            ];
-          })
           nixosModules.thymis-device
           nixosModules."thymis-device-raspberry-pi-5"
           nixosModules."thymis-image-sd-card-image"
