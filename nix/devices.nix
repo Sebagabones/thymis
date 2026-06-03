@@ -107,12 +107,12 @@ let
         raspberrypi-eeprom
         cachix
       ];
-      system.nixos.tags = let cfg = config.boot.loader.raspberry-pi;
-      in [
-        "raspberry-pi-${cfg.variant}"
-        # cfg.bootloader
-        # config.boot.kernelPackages.kernel.version
-      ];
+      # system.nixos.tags = let cfg = config.boot.loader.raspberry-pi;
+      # in [
+      #   "raspberry-pi-${cfg.variant}"
+      #   # cfg.bootloader
+      #   # config.boot.kernelPackages.kernel.version
+      # ];
       services.udev.extraRules = ''
         # Ignore partitions with "Required Partition" GPT partition attribute
         # On our RPis this is firmware (/boot/firmware) partition
