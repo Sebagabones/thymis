@@ -176,7 +176,7 @@ let
           hostPkgs.callPackage ({ stdenv, dosfstools, e2fsprogs, mtools
             , libfaketime, util-linux, zstd }:
             stdenv.mkDerivation {
-              name = config.sdImage.image.fileName;
+              name = config.image.fileName;
 
               nativeBuildInputs =
                 [ dosfstools e2fsprogs mtools libfaketime util-linux zstd ];
