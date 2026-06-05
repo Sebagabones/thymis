@@ -84,6 +84,7 @@ let
         FIRST_FAT_PARTITION_IDX=$(echo "$PARTED_OUTPUT" | ${pkgs.jq}/bin/jq -r '.disk.partitions[] | select(.filesystem == "fat16") | .number' | head -n 1)
         echo "First FAT partition index: $FIRST_FAT_PARTITION_IDX"
         eval "$(${pkgs.util-linux}/bin/partx "$FINAL_IMAGE_DESTINATION" -o START,SECTORS --nr "$FIRST_FAT_PARTITION_IDX" --pairs)"
+        exit(1)
         echo "First FAT partition starts at $START and has $SECTORS sectors"
         FIRST_FAT_PARTITION_START=$START
         FIRST_FAT_PARTITION_SECTORS=$SECTORS
