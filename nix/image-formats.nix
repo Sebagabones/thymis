@@ -176,7 +176,7 @@ let
           hostPkgs.callPackage ({ stdenv, dosfstools, e2fsprogs, mtools
             , libfaketime, util-linux, zstd }:
             stdenv.mkDerivation {
-              name = config.sdImage.imageName;
+              name = config.sdImage.image.fileName;
 
               nativeBuildInputs =
                 [ dosfstools e2fsprogs mtools libfaketime util-linux zstd ];
@@ -226,7 +226,6 @@ let
 
                 # Copy the rootfs into the SD image
                 eval $(partx $img -o START,SECTORS --nr 2 --pairs)
-                exit(1)
                 dd conv=notrunc if=./root-fs.img of=$img seek=$START count=$SECTORS
 
                 # Create a FAT32 /boot/firmware partition of suitable size into firmware_part.img
