@@ -233,7 +233,7 @@ class Kiosk(modules.Module):
             }};
            services.cage = lib.mkOverride {priority} {{
                 enable = true;
-                user = "nixos";
+                user = "thymiskiosk";
                 program = ''
                 ${{pkgs.firefox}}/bin/firefox -kiosk -private-window  "{kiosk_url}"
                 '';
