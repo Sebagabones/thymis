@@ -230,16 +230,6 @@ let
           Option "PrimaryGPU" "true"
         EndSection
       '';
-      services.avahi = {
-        enable = true;
-        nssmdns4 = true;
-        publish = {
-          enable = true;
-          workstation = true;
-          domain = true;
-          addresses = true;
-        };
-      };
     };
   };
 in deviceConfig
