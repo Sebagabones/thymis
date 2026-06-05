@@ -84,7 +84,6 @@ let
         FIRST_FAT_PARTITION_IDX=$(echo "$PARTED_OUTPUT" | ${pkgs.jq}/bin/jq -r '.disk.partitions[] | select(.filesystem == "fat16") | .number' | head -n 1)
         echo "First FAT partition index: $FIRST_FAT_PARTITION_IDX"
         eval "$(${pkgs.util-linux}/bin/partx "$FINAL_IMAGE_DESTINATION" -o START,SECTORS --nr "$FIRST_FAT_PARTITION_IDX" --pairs)"
-        exit(1)
         echo "First FAT partition starts at $START and has $SECTORS sectors"
         FIRST_FAT_PARTITION_START=$START
         FIRST_FAT_PARTITION_SECTORS=$SECTORS
@@ -227,6 +226,7 @@ let
 
                 # Copy the rootfs into the SD image
                 eval $(partx $img -o START,SECTORS --nr 2 --pairs)
+                exit(1)
                 dd conv=notrunc if=./root-fs.img of=$img seek=$START count=$SECTORS
 
                 # Create a FAT32 /boot/firmware partition of suitable size into firmware_part.img
