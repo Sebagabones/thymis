@@ -81,7 +81,7 @@ let
         echo "Final image: $FINAL_IMAGE_DESTINATION"
         PARTED_OUTPUT=$(${pkgs.parted}/bin/parted --json -s "$FINAL_IMAGE_DESTINATION" print)
         echo "Parted output: $PARTED_OUTPUT"
-        FIRST_FAT_PARTITION_IDX=$(echo "$PARTED_OUTPUT" | ${pkgs.jq}/bin/jq -r '.disk.partitions[] | select(.filesystem == "fat16") | .number' | head -n 1)
+        FIRST_FAT_PARTITION_IDX=$(echo "$PARTED_OUTPUT" | ${pkgs.jq}/bin/jq -r '.disk.partitions[] | select(.filesystem == "fat32") | .number' | head -n 1)
         echo "First FAT partition index: $FIRST_FAT_PARTITION_IDX"
         eval "$(${pkgs.util-linux}/bin/partx "$FINAL_IMAGE_DESTINATION" -o START,SECTORS --nr "$FIRST_FAT_PARTITION_IDX" --pairs)"
         echo "First FAT partition starts at $START and has $SECTORS sectors"
@@ -185,7 +185,7 @@ let
 
               buildCommand = ''
                 mkdir -p $out/nix-support $out/sd-image
-                export img=$out/sd-image/${config.sdImage.imageName}
+                export img=$out/sd-image/${config.image.fileName}
 
                 echo "${pkgs.stdenv.buildPlatform.system}" > $out/nix-support/system
                 if test -n "$compressImage"; then
