@@ -158,12 +158,12 @@ let
                 value = lib.mkDefault 2;
               };
 
-              # Don't have the firmware create an initial video= setting in cmdline.txt.
-              # Use the kernel's default instead.
-              disable_fw_kms_setup = {
-                enable = lib.mkDefault true;
-                value = lib.mkDefault true;
-              };
+              # # Don't have the firmware create an initial video= setting in cmdline.txt.
+              # # Use the kernel's default instead.
+              # disable_fw_kms_setup = {
+              #   enable = lib.mkDefault true;
+              #   value = lib.mkDefault true;
+              # };
               # Run in 64-bit mode
               arm_64bit = {
                 enable = lib.mkDefault true;
@@ -218,18 +218,18 @@ let
           dtoverlay=vc4-kms-dsi-waveshare-panel,10_1_inch,dsi0
         '';
       };
-      # hardware.graphics = {
-      #   enable = true;
-      #   extraPackages = [ pkgs.mesa.drivers ];
-      # };
-      # services.xserver.extraConfig = ''
-      #   Section "OutputClass"
-      #     Identifier "vc4"
-      #     MatchDriver "vc4"
-      #     Driver "modesetting"
-      #     Option "PrimaryGPU" "true"
-      #   EndSection
-      # '';
+      hardware.graphics = {
+        enable = true;
+        extraPackages = [ pkgs.mesa.drivers ];
+      };
+      services.xserver.extraConfig = ''
+        Section "OutputClass"
+          Identifier "vc4"
+          MatchDriver "vc4"
+          Driver "modesetting"
+          Option "PrimaryGPU" "true"
+        EndSection
+      '';
       services.avahi = {
         enable = true;
         nssmdns4 = true;
