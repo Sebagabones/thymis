@@ -235,7 +235,7 @@ class Kiosk(modules.Module):
                 enable = true;
                 user = "thymiskiosk";
                 program = ''
-                ${{pkgs.ungoogled-chromium}}/bin/chromium --app='{kiosk_url}'
+                ${{pkgs.ungoogled-chromium}}/bin/chromium --app="{kiosk_url}"
                 '';
             }};
         """.strip()
