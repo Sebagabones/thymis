@@ -235,8 +235,7 @@ class Kiosk(modules.Module):
                 enable = true;
                 user = "thymiskiosk";
                 program = ''
-                #${{pkgs.firefox}}/bin/firefox -kiosk -private-window  "{kiosk_url}"
-                ${{pkgs.ungoogled-chromium}}/bin/chromium --app='{kiosk_url}'
+                ${{pkgs.firefox}}/bin/firefox -kiosk -private-window  "{kiosk_url}"
                 '';
             }};
         """.strip()
