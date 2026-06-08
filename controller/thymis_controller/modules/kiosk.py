@@ -159,84 +159,81 @@ class Kiosk(modules.Module):
             json.dumps(module_settings.__dict__, sort_keys=True).encode()
         ).hexdigest()
 
-        # f.write(
-        #     f"""
-        #     services.xserver.enable = lib.mkOverride {priority} true;
-        #     services.displayManager.sddm.enable = lib.mkOverride {priority} true;
-        #     services.displayManager.autoLogin.enable = lib.mkOverride {priority} true;
-        #     services.displayManager.autoLogin.user = lib.mkOverride {priority} "thymiskiosk";
-        #     users.users.thymiskiosk = lib.mkOverride {priority} {{
-        #         isNormalUser = true;
-        #         createHome = true;
-        #     }};
-        #     services.pipewire.enable = false;
-        #     hardware.pulseaudio.enable = true;
-        #     hardware.pulseaudio.support32Bit = true;
-        #     services.xserver.windowManager.i3.enable = lib.mkOverride {priority} true;
-        #     services.xserver.windowManager.i3.configFile = lib.mkOverride {priority} (pkgs.writeText "i3-config" ''
-        #     # i3 config file (v4)
-        #     bar {{
-        #         mode invisible
-        #     }}
-        #     new_window pixel 0
-        #     new_float pixel 0
-        #     exec "/run/current-system/sw/bin/xrandr --newmode 1024x600_60.00  48.96  1024 1064 1168 1312  600 601 604 622  -HSync +Vsync; /run/current-system/sw/bin/xrandr --addmode HDMI-1 1024x600_60.00;"
-        #     {f'exec "sleep 2; /run/current-system/sw/bin/xrandr --output HDMI-1 --rotate {xrandr_rotation}"' if xrandr_rotation != 'normal' else ''}
-        #     {f'exec "sleep 2; /run/current-system/sw/bin/xrandr --output HDMI-1 --mode {xrandr_mode}"' if "xrandr_mode" in module_settings.settings else 'exec "sleep 2; /run/current-system/sw/bin/xrandr --output HDMI-1 --auto"'}
-        #     exec "/run/current-system/sw/bin/xset s off"
-        #     exec "/run/current-system/sw/bin/xset -dpms"
-        #     exec "${{pkgs.unclutter}}/bin/unclutter"
-        #     exec ${{pkgs.bash}}/bin/bash -c "\
-        #         ${{pkgs.killall}}/bin/killall chromium; \
-        #         rm -rf ~/.config/chromium/Singleton*; \
-        #         mkdir -p ~/.config/chromium/Default; \
-        #         [ -s ~/.config/chromium/Default/Preferences ] || echo \\\\"{{}}\\\\" > ~/.config/chromium/Default/Preferences; \
-        #         ${{pkgs.jq}}/bin/jq '.translate_blocked_languages = ((.translate_blocked_languages // []) + [\\\\"de\\\\"] | unique)' ~/.config/chromium/Default/Preferences > tmp.json && \
-        #         mv tmp.json ~/.config/chromium/Default/Preferences; \
-        #         ${{pkgs.ungoogled-chromium}}/bin/chromium --app='data:text/html,<html><body><h1>Loading...</h1></body></html>' & \
-        #         sleep 30; \
-        #         ${{pkgs.killall}}/bin/killall chromium; \
-        #         sleep 3; \
-        #         while ! ${{pkgs.curl}}/bin/curl --fail --silent --max-time 10 --head '{kiosk_url}'; do \
-        #         sleep 3; \
-        #         done; \
-        #         sleep 1; \
-        #         ${{pkgs.ungoogled-chromium}}/bin/chromium --app='{kiosk_url}' \
-        #         ${{if (pkgs.stdenv.system == "aarch64-linux") then "--disable-gpu" else ""}} \
-        #         --disable-features=Translate --hide-scrollbars;"
-        #
-        #     {'exec ${pkgs.bash}/bin/bash -c "mkdir -p $HOME/tigervnc; ${pkgs.tigervnc}/bin/vncpasswd -f <<< \\"'+ vnc_password + '\\" > $HOME/tigervnc/passwd"' if enable_vnc else ''}
-        #     {'exec ${pkgs.tigervnc}/bin/x0vncserver -display :0 -PasswordFile=$HOME/tigervnc/passwd' if enable_vnc else ''}
-        #     exec "${{pkgs.pamixer}}/bin/pamixer --set-volume {volume}"
-        #     {f'exec "${{pkgs.pulseaudio}}/bin/pactl set-default-sink \'\'$(${{pkgs.pulseaudio}}/bin/pactl list short sinks | grep -m1 -i \'{audio_sink_fuzzy}\' | cut -f1)"' if audio_sink_fuzzy else ''}
-        #     '');
-        #     systemd.services.display-manager.restartIfChanged = lib.mkOverride {priority} true;
-        #     systemd.services.display-manager.environment.NONCE = lib.mkOverride {priority} "{nonce}";
-        #     # networking.firewall.allowedTCPPorts = [ 5900 ];
-        #     system.activationScripts.restart-display-manager-thymis = {{
-        #         supportsDryActivation = true;
-        #         text = ''
-        #             mkdir -p /run/nixos
-        #             if [ "$NIXOS_ACTION" != dry-activate ]; then
-        #                 echo display-manager.service > /run/nixos/activation-restart-list
-        #             else
-        #                 echo display-manager.service > /run/nixos/dry-activation-restart-list
-        #             fi
-        #         '';
-        #     }};
-        #     """.strip()
         f.write(
             f"""
+            services.xserver.enable = lib.mkOverride {priority} true;
+            services.displayManager.sddm.enable = lib.mkOverride {priority} true;
+            services.displayManager.autoLogin.enable = lib.mkOverride {priority} true;
+            services.displayManager.autoLogin.user = lib.mkOverride {priority} "thymiskiosk";
             users.users.thymiskiosk = lib.mkOverride {priority} {{
                 isNormalUser = true;
                 createHome = true;
             }};
-           services.cage = lib.mkOverride {priority} {{
-                enable = true;
-                user = "thymiskiosk";
-                program = ''
-                ${{pkgs.ungoogled-chromium}}/bin/chromium --kiosk --noerrdialogs --disable-infobars '{kiosk_url}'
+            services.pipewire.enable = false;
+            hardware.pulseaudio.enable = true;
+            hardware.pulseaudio.support32Bit = true;
+            services.xserver.windowManager.i3.enable = lib.mkOverride {priority} true;
+            services.xserver.windowManager.i3.configFile = lib.mkOverride {priority} (pkgs.writeText "i3-config" ''
+            # i3 config file (v4)
+            bar {{
+                mode invisible
+            }}
+            new_window pixel 0
+            new_float pixel 0
+            exec "/run/current-system/sw/bin/xset s off"
+            exec "/run/current-system/sw/bin/xset -dpms"
+            exec "${{pkgs.unclutter}}/bin/unclutter"
+            exec ${{pkgs.bash}}/bin/bash -c "\
+                ${{pkgs.killall}}/bin/killall chromium; \
+                rm -rf ~/.config/chromium/Singleton*; \
+                mkdir -p ~/.config/chromium/Default; \
+                [ -s ~/.config/chromium/Default/Preferences ] || echo \\\\"{{}}\\\\" > ~/.config/chromium/Default/Preferences; \
+                ${{pkgs.jq}}/bin/jq '.translate_blocked_languages = ((.translate_blocked_languages // []) + [\\\\"de\\\\"] | unique)' ~/.config/chromium/Default/Preferences > tmp.json && \
+                mv tmp.json ~/.config/chromium/Default/Preferences; \
+                ${{pkgs.ungoogled-chromium}}/bin/chromium --app='data:text/html,<html><body><h1>Loading...</h1></body></html>' & \
+                sleep 30; \
+                ${{pkgs.killall}}/bin/killall chromium; \
+                sleep 3; \
+                while ! ${{pkgs.curl}}/bin/curl --fail --silent --max-time 10 --head '{kiosk_url}'; do \
+                sleep 3; \
+                done; \
+                sleep 1; \
+                ${{pkgs.ungoogled-chromium}}/bin/chromium --app='{kiosk_url}' \
+                ${{if (pkgs.stdenv.system == "aarch64-linux") then "--disable-gpu" else ""}} \
+                --disable-features=Translate --hide-scrollbars;"
+
+            {'exec ${pkgs.bash}/bin/bash -c "mkdir -p $HOME/tigervnc; ${pkgs.tigervnc}/bin/vncpasswd -f <<< \\"' + vnc_password + '\\" > $HOME/tigervnc/passwd"' if enable_vnc else ""}
+            {"exec ${pkgs.tigervnc}/bin/x0vncserver -display :0 -PasswordFile=$HOME/tigervnc/passwd" if enable_vnc else ""}
+            exec "${{pkgs.pamixer}}/bin/pamixer --set-volume {volume}"
+            {f"exec \"${{pkgs.pulseaudio}}/bin/pactl set-default-sink ''$(${{pkgs.pulseaudio}}/bin/pactl list short sinks | grep -m1 -i '{audio_sink_fuzzy}' | cut -f1)\"" if audio_sink_fuzzy else ""}
+            '');
+            systemd.services.display-manager.restartIfChanged = lib.mkOverride {priority} true;
+            systemd.services.display-manager.environment.NONCE = lib.mkOverride {priority} "{nonce}";
+            # networking.firewall.allowedTCPPorts = [ 5900 ];
+            system.activationScripts.restart-display-manager-thymis = {{
+                supportsDryActivation = true;
+                text = ''
+                    mkdir -p /run/nixos
+                    if [ "$NIXOS_ACTION" != dry-activate ]; then
+                        echo display-manager.service > /run/nixos/activation-restart-list
+                    else
+                        echo display-manager.service > /run/nixos/dry-activation-restart-list
+                    fi
                 '';
             }};
-        """.strip()
+            """.strip()
+            # f.write(
+            #     f"""
+            #     users.users.thymiskiosk = lib.mkOverride {priority} {{
+            #         isNormalUser = true;
+            #         createHome = true;
+            #     }};
+            #    services.cage = lib.mkOverride {priority} {{
+            #         enable = true;
+            #         user = "thymiskiosk";
+            #         program = ''
+            #         ${{pkgs.ungoogled-chromium}}/bin/chromium --kiosk --noerrdialogs --disable-infobars --app='{kiosk_url}'
+            #         '';
+            #     }};
+            # """.strip()
         )
