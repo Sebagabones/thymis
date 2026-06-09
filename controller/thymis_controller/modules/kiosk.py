@@ -255,7 +255,8 @@ class Kiosk(modules.Module):
                 ${{pkgs.ungoogled-chromium}}/bin/chromium --kiosk --noerrdialogs --disable-infobars --app='{kiosk_url}'
                 '';
             }};
-          systemd.thymiskiosk.services.screen-rotation = {{
+          systemd.user.services.screen-rotation = {{
+               user = "thymiskiosk";
                enable = true;
                after = [ "graphical.target" ];
                wantedBy = ["cage-tty1.service"];
