@@ -234,7 +234,7 @@ class Kiosk(modules.Module):
            services.cage = lib.mkOverride {priority} {{
                 enable = true;
                 user = "thymiskiosk";
-                extraArguments = ["-d" "-rr"];
+                extraArguments = ["-d"];
                 program = ''
                 ${{pkgs.ungoogled-chromium}}/bin/chromium --kiosk --noerrdialogs --disable-infobars --app='{kiosk_url}'
                 '';
