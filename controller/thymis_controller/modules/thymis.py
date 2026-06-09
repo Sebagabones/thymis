@@ -967,7 +967,7 @@ Secrets sind perfekt für
             time_servers_nix = convert_python_value_to_nix(servers, ident=1)
             f.write(f"  networking.timeServers = {time_servers_nix};\n")
 
-        f.write(f'  time.timeZone = "{time_zone}";\n')
+        f.write(f'  time.timeZone = lib.mkOverride {priority} "{time_zone}";\n')
 
         if security_pki_certificates:
             certificates = list(
