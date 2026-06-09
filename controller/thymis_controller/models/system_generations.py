@@ -1,5 +1,5 @@
 import datetime
-from typing import Bool, Int, List, Str
+from typing import Int, List, Str
 
 from pydantic import BaseModel
 
@@ -17,4 +17,4 @@ class SystemGeneration(BaseModel):
         Str  # Can either be "Unknown" or (TODO: Work out what else this can be)
     )
     specialisations: List[str]  # Can be empty, TODO: Double check the type of content
-    current: Bool
+    current: bool

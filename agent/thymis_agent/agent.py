@@ -11,7 +11,7 @@ import subprocess
 import sys
 import uuid
 from datetime import timezone
-from typing import Any, Bool, Dict, Int, List, Literal, Optional, Str, Tuple, Union
+from typing import Any, Dict, Int, List, Literal, Optional, Str, Tuple, Union
 
 import http_network_relay.edge_agent
 import http_network_relay.edge_agent as ea
@@ -212,7 +212,7 @@ class SystemGeneration(BaseModel):
         Str  # Can either be "Unknown" or (TODO: Work out what else this can be)
     )
     specialisations: List[str]  # Can be empty, TODO: Double check the type of content
-    current: Bool
+    current: bool
 
 
 class EtRSendSystemGenerationsMessage(BaseModel):
