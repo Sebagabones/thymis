@@ -258,7 +258,7 @@ class Kiosk(modules.Module):
           systemd.services.myservice = {{
                enable = true;
                after = [ "graphical-session.target" ];
-               wantedBy = ["cage-tty1"];
+               wantedBy = ["cage-tty1.service"];
                serviceConfig = {{
                 ExecStart ="${{pkgs.wlr-randr}}/bin/wlr-randr --output {xrandr_name} {"--transform {xrandr_rotation}" if xrandr_rotation != "normal" else ""}";
                 }};
