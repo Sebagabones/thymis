@@ -260,7 +260,7 @@ class Kiosk(modules.Module):
                after = [ "graphical-session.target" ];
                wantedBy = ["cage-tty1"];
                serviceConfig = {{
-                ExecStart ="${{pkgs.wlr-randr}}/bin/wlr-randr --output {xrandr_name}" + "--transform {xrandr_rotation}" if xrandr_rotation != 'normal' else '';
+                ExecStart ="f'${{pkgs.wlr-randr}}/bin/wlr-randr --output {xrandr_name}' + {f"--transform {xrandr_rotation}" if xrandr_rotation != "normal" else ""}";
                 }};
           }};
         """.strip()
