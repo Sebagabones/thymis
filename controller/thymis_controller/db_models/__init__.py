@@ -6,5 +6,6 @@ from .device_metric import DeviceMetric
 from .hardware_device import HardwareDevice
 from .logs import LogEntry
 from .secrets import *
+from .system_generations import SystemGeneration
 from .task import Task, TaskProcess
 from .web_session import WebSession
