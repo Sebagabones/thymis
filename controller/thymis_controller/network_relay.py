@@ -210,8 +210,6 @@ class NetworkRelay(nr.NetworkRelay):
                             self.connection_id_to_public_key[connection_id],
                         )
             case agent.EtRSendSystemGenerations():
-                # TODO - carry on from hjere
-                print("Implement me pls")
                 inner = message.inner
                 with sqlalchemy.orm.Session(self.db_engine) as db_session:
                     deployment_infos = crud_deployment_info.get_by_ssh_public_key(
