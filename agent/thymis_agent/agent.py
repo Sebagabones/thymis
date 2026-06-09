@@ -316,7 +316,7 @@ class Agent(ea.EdgeAgent):
             case RtESendSecretsMessage():
                 self.place_secrets_on_message(message.inner)
             case RtEGetSystemGenerationsMessage():
-                self.send_system_generations()
+                await self.send_system_generations()
             case RtESwitchToNewConfigMessage():
                 new_path_to_config = message.inner.new_path_to_config
                 current_config = os.readlink("/run/current-system")
@@ -908,7 +908,7 @@ class Agent(ea.EdgeAgent):
 
         logging.info("Public host key updated")
 
-    def send_system_generations(self):
+    async def send_system_generations(self):
         args = [
             "nixos-rebuild",
             "list-generations",
