@@ -206,7 +206,7 @@ def get_system_generations(
     if deployment_info is None:
         raise HTTPException(status_code=404, detail="Device not found")
 
-    return crud_system_generations.get_system_generations(db_session, id, limit=10)
+    return crud_system_generations.get_generations(db_session, id, limit=10)
 
 
 @router.get("/deployment_info/{id}/error_logs", response_model=list[models.LogEntry])
