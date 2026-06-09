@@ -196,7 +196,7 @@ def get_device_metrics(
 
 @router.get(
     "/deployment_info/{id}/system_generations",
-    response_model=list[models.SystemGenerations],
+    response_model=list[models.SystemGeneration],
 )
 def get_system_generations(
     id: uuid.UUID,

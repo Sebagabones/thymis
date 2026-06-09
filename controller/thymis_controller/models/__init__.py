@@ -6,7 +6,7 @@ from .logs import *
 from .module import *
 from .secrets import *
 from .state import *
+from .system_generations import *
 from .task import *
 from .web_session import *
-
 AgentConnection.model_rebuild()

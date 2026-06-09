@@ -26,7 +26,7 @@ def get_generations(
 
 def _delete_remove_generations(
     db_session: Session,
-    list_of_current_generations: List[models.SystenGenerations.generation],
+    list_of_current_generations: List[int],
 ) -> None:
     num_removed = (
         db_session.query(db_models.SystemGeneration)

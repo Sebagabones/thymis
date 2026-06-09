@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timezone
+import datetime
 from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, Uuid
