@@ -259,6 +259,9 @@ class Kiosk(modules.Module):
                enable = true;
                after = [ "graphical.target" ];
                wantedBy = ["cage-tty1.service"];
+               environment = {{
+                 XDG_RUNTIME_DIR = "/run/user/1001"; # thymiskiosk user is 1001, someday maybe make this not hardcoded
+                }};
                serviceConfig = {{
                  Type = "oneshot";
                  User = "thymiskiosk";
