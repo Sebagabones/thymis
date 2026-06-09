@@ -255,11 +255,12 @@ class Kiosk(modules.Module):
                 ${{pkgs.ungoogled-chromium}}/bin/chromium --kiosk --noerrdialogs --disable-infobars --app='{kiosk_url}'
                 '';
             }};
-          systemd.services.screen-rotation = {{
+          systemd.thymiskiosk.services.screen-rotation = {{
                enable = true;
                after = [ "graphical.target" ];
                wantedBy = ["cage-tty1.service"];
                serviceConfig = {{
+               Type = "oneshot";
                 ExecStart ="${{pkgs.wlr-randr}}/bin/wlr-randr --output {xrandr_name} {"--transform {xrandr_rotation}" if xrandr_rotation != "normal" else ""}";
                 }};
           }};
