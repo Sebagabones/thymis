@@ -1,5 +1,5 @@
 import datetime
-from typing import Int, List, Str
+from typing import List
 
 from pydantic import BaseModel
 
@@ -9,12 +9,12 @@ __all__ = [
 
 
 class SystemGeneration(BaseModel):
-    generation: Int
+    generation: int
     date: datetime.datetime  # Follows form: YYYY-MM-DD HH:MM:SS
-    nixos_version: Str  # Not a plain number, e.g.: "26.05.20260308.9dcb002"
-    kernel_version: Str  # Can either be "Unknown" or of format "6.18.20"
+    nixos_version: str  # Not a plain number, e.g.: "26.05.20260308.9dcb002"
+    kernel_version: str  # Can either be "Unknown" or of format "6.18.20"
     configuration_revision: (
-        Str  # Can either be "Unknown" or (TODO: Work out what else this can be)
+        str  # Can either be "Unknown" or (TODO: Work out what else this can be)
     )
     specialisations: List[str]  # Can be empty, TODO: Double check the type of content
     current: bool

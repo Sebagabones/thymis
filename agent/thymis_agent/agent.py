@@ -11,7 +11,7 @@ import subprocess
 import sys
 import uuid
 from datetime import timezone
-from typing import Any, Dict, Int, List, Literal, Optional, Str, Tuple, Union
+from typing import Any, Dict, List, Literal, Optional, Tuple, Union
 
 import http_network_relay.edge_agent
 import http_network_relay.edge_agent as ea
@@ -204,12 +204,12 @@ class EtRNetworkInterfacesMessage(BaseModel):
 
 
 class SystemGeneration(BaseModel):
-    generation: Int
+    generation: int
     date: datetime.datetime  # Follows form: YYYY-MM-DD HH:MM:SS
-    nixos_version: Str  # Not a plain number, e.g.: "26.05.20260308.9dcb002"
-    kernel_version: Str  # Can either be "Unknown" or of format "6.18.20"
+    nixos_version: str  # Not a plain number, e.g.: "26.05.20260308.9dcb002"
+    kernel_version: str  # Can either be "Unknown" or of format "6.18.20"
     configuration_revision: (
-        Str  # Can either be "Unknown" or (TODO: Work out what else this can be)
+        str  # Can either be "Unknown" or (TODO: Work out what else this can be)
     )
     specialisations: List[str]  # Can be empty, TODO: Double check the type of content
     current: bool
