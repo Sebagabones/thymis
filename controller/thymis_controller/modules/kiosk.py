@@ -55,6 +55,18 @@ class Kiosk(modules.Module):
         order=50,
     )
 
+    xrandr_name = modules.Setting(
+        display_name=modules.LocalizedString(
+            en="Display name",
+            de="Anzeigename",
+        ),
+        type="string",
+        default="DSI-1",
+        description="Name of the xrandr display",
+        example="HDMI-1",
+        order=53,
+    )
+
     volume = modules.Setting(
         display_name=modules.LocalizedString(
             en="Volume",
@@ -140,7 +152,11 @@ class Kiosk(modules.Module):
             if "xrandr_rotation" in module_settings.settings
             else self.xrandr_rotation.default
         )
-
+        xrandr_name = (
+            module_settings.settings["xrandr_name"]
+            if "xrandr_name" in module_settings.settings
+            else self.xrandr_name.default
+        )
         volume = (
             module_settings.settings["volume"]
             if "volume" in module_settings.settings
@@ -239,5 +255,13 @@ class Kiosk(modules.Module):
                 ${{pkgs.ungoogled-chromium}}/bin/chromium --kiosk --noerrdialogs --disable-infobars --app='{kiosk_url}'
                 '';
             }};
+          systemd.services.myservice = {{
+               enable = true;
+               after = [ "graphical-session.target" ];
+               wantedBy = ["cage-tty1"];
+               serviceConfig = {{
+                ExecStart ="${{pkgs.wlr-randr}}/bin/wlr-randr --output {xrandr_name} --transform + {xrandr_rotation if xrandr_rotation != "normal" else ""}";
+                }}
+          }}
         """.strip()
         )
