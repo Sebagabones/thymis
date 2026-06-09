@@ -265,7 +265,7 @@ class Kiosk(modules.Module):
                serviceConfig = {{
                  Type = "oneshot";
                  User = "thymiskiosk";
-                  ExecStart ="${{pkgs.wlr-randr}}/bin/wlr-randr --output {xrandr_name} {"--transform {xrandr_rotation}" if xrandr_rotation != "normal" else ""}";
+                  ExecStart ="${{pkgs.wlr-randr}}/bin/wlr-randr --output {xrandr_name} {f"--transform {xrandr_rotation}" if xrandr_rotation != "normal" else ""}";
                 }};
           }};
         """.strip()
