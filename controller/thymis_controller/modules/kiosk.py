@@ -256,13 +256,13 @@ class Kiosk(modules.Module):
                 '';
             }};
           systemd.user.services.screen-rotation = {{
-               user = "thymiskiosk";
                enable = true;
                after = [ "graphical.target" ];
                wantedBy = ["cage-tty1.service"];
                serviceConfig = {{
-               Type = "oneshot";
-                ExecStart ="${{pkgs.wlr-randr}}/bin/wlr-randr --output {xrandr_name} {"--transform {xrandr_rotation}" if xrandr_rotation != "normal" else ""}";
+                 Type = "oneshot";
+                 User = "thymiskiosk";
+                  ExecStart ="${{pkgs.wlr-randr}}/bin/wlr-randr --output {xrandr_name} {"--transform {xrandr_rotation}" if xrandr_rotation != "normal" else ""}";
                 }};
           }};
         """.strip()
