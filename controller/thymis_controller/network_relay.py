@@ -9,17 +9,19 @@ import http_network_relay.network_relay as nr
 import paramiko
 import sqlalchemy.orm
 import thymis_agent.agent as agent
+from fastapi import WebSocket
+from fastapi.concurrency import run_in_threadpool
+from pydantic import BaseModel
+from pyrage import ssh
+
 import thymis_controller.crud.agent_connection as crud_agent_connection
 import thymis_controller.crud.agent_token as crud_agent_token
 import thymis_controller.crud.deployment_info as crud_deployment_info
 import thymis_controller.crud.device_metric as crud_device_metric
 import thymis_controller.crud.hardware_device as crud_hardware_device
+import thymis_controller.crud.system_generations as crud_system_generations
 import thymis_controller.crud.task as crud_task
 import thymis_controller.models.task as models_task
-from fastapi import WebSocket
-from fastapi.concurrency import run_in_threadpool
-from pydantic import BaseModel
-from pyrage import ssh
 from thymis_controller.config import global_settings
 
 if TYPE_CHECKING:
@@ -206,6 +208,25 @@ class NetworkRelay(nr.NetworkRelay):
                         logger.error(
                             "Deployment info not found for public key %s (network interfaces update)",
                             self.connection_id_to_public_key[connection_id],
+                        )
+            case agent.EtRSendSystemGenerations():
+                # TODO - carry on from hjere
+                print("Implement me pls")
+                inner = message.inner
+                with sqlalchemy.orm.Session(self.db_engine) as db_session:
+                    deployment_infos = crud_deployment_info.get_by_ssh_public_key(
+                        db_session,
+                        self.connection_id_to_public_key[connection_id],
+                    )
+                    if deployment_infos:
+                        crud_system_generations.add_generations(
+                            db_session, deployment_infos[0].id, inner.system_generations
+                        )
+                        self.notification_manager.broadcast_invalidate_notification(
+                            [
+                                f"/api/deployment_info/{info.id}/system_generations"
+                                for info in deployment_infos
+                            ]
                         )
 
             case _:

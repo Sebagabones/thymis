@@ -3,10 +3,12 @@ import os
 import uuid
 from datetime import datetime, timedelta, timezone
 
+from fastapi import APIRouter, HTTPException, Query
+
 import thymis_controller.crud.agent_connection as crud_agent_connection
 import thymis_controller.crud.device_metric as crud_device_metric
 import thymis_controller.crud.logs as crud_logs
-from fastapi import APIRouter, HTTPException, Query
+import thymis_controller.crud.system_generations as crud_system_generations
 from thymis_controller import crud, db_models, models
 from thymis_controller.dependencies import DBSessionAD, NetworkRelayAD, ProjectAD
 from thymis_controller.models import device
@@ -190,6 +192,21 @@ def get_device_metrics(
     return crud_device_metric.get_metrics_downsampled(
         db_session, id, from_time, now, granularity
     )
+
+
+@router.get(
+    "/deployment_info/{id}/system_generations",
+    response_model=list[models.SystemGenerations],
+)
+def get_system_generations(
+    id: uuid.UUID,
+    db_session: DBSessionAD,
+):
+    deployment_info = db_session.get(db_models.DeploymentInfo, id)
+    if deployment_info is None:
+        raise HTTPException(status_code=404, detail="Device not found")
+
+    return crud_system_generations.get_system_generations(db_session, id, limit=10)
 
 
 @router.get("/deployment_info/{id}/error_logs", response_model=list[models.LogEntry])

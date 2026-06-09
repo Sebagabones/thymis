@@ -1,8 +1,9 @@
 import pathlib
 from typing import List, Tuple
 
-import thymis_controller.modules.modules as modules
 from pydantic import JsonValue
+
+import thymis_controller.modules.modules as modules
 from thymis_controller import db_models, models
 from thymis_controller.config import global_settings
 from thymis_controller.lib import read_into_base64

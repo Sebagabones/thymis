@@ -11,7 +11,7 @@ import subprocess
 import sys
 import uuid
 from datetime import timezone
-from typing import Any, Dict, List, Literal, Optional, Tuple, Union
+from typing import Any, Bool, Dict, Int, List, Literal, Optional, Str, Tuple, Union
 
 import http_network_relay.edge_agent
 import http_network_relay.edge_agent as ea
@@ -173,6 +173,7 @@ class AgentToRelayMessage(BaseModel):
         "EtRSwitchToNewConfigResultMessage",
         "EtRMetricsMessage",
         "EtRNetworkInterfacesMessage",
+        "EtRSendSystemGenerationsMessage",
     ] = Field(discriminator="kind")
 
 
@@ -202,6 +203,23 @@ class EtRNetworkInterfacesMessage(BaseModel):
     network_interfaces: List[Dict[str, Any]]
 
 
+class SystemGeneration(BaseModel):
+    generation: Int
+    date: datetime.datetime  # Follows form: YYYY-MM-DD HH:MM:SS
+    nixos_version: Str  # Not a plain number, e.g.: "26.05.20260308.9dcb002"
+    kernel_version: Str  # Can either be "Unknown" or of format "6.18.20"
+    configuration_revision: (
+        Str  # Can either be "Unknown" or (TODO: Work out what else this can be)
+    )
+    specialisations: List[str]  # Can be empty, TODO: Double check the type of content
+    current: Bool
+
+
+class EtRSendSystemGenerationsMessage(BaseModel):
+    kind: Literal["send_system_generations"] = "send_system_generations"
+    system_generations: List[SystemGeneration]
+
+
 class RelayToAgentMessage(BaseModel):
     # This is a custom message that the relay sends to the agent
     inner: Union[
@@ -209,6 +227,7 @@ class RelayToAgentMessage(BaseModel):
         "RtESwitchToNewConfigMessage",
         "RtESuccesfullySSHConnectedMessage",
         "RtESendSecretsMessage",
+        "RtEGetSystemGenerationsMessage",
     ] = Field(discriminator="kind")
 
 
@@ -240,6 +259,10 @@ class RtESendSecretsMessage(BaseModel):
     kind: Literal["send_secrets"] = "send_secrets"
     secrets: Dict[uuid.UUID, str]
     secret_infos: List[SecretForDevice]
+
+
+class RtEGetSystemGenerationsMessage(BaseModel):
+    kind: Literal["get_system_generations"] = "get_system_generations"
 
 
 class EdgeAgentToRelayStartMessage(ea.EtRStartMessage):
@@ -292,6 +315,8 @@ class Agent(ea.EdgeAgent):
                 self.update_public_key()
             case RtESendSecretsMessage():
                 self.place_secrets_on_message(message.inner)
+            case RtEGetSystemGenerationsMessage():
+                self.send_system_generations()
             case RtESwitchToNewConfigMessage():
                 new_path_to_config = message.inner.new_path_to_config
                 current_config = os.readlink("/run/current-system")
@@ -882,6 +907,33 @@ class Agent(ea.EdgeAgent):
         os.system("systemctl restart sshd")
 
         logging.info("Public host key updated")
+
+    def send_system_generations(self):
+        args = [
+            "nixos-rebuild",
+            "list-generations",
+            "--json",
+        ]
+        proc = await asyncio.create_subprocess_exec(
+            args[0],
+            *args[1:],
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        stdout, stderr = await proc.communicate()
+        if proc.returncode != 0:
+            logger.error(
+                "Failed to get system generations: %s",
+                stderr.decode(),
+            )
+        else:
+            await self.websocket.send(
+                AgentToRelayMessage(
+                    inner=EtRSendSystemGenerationsMessage.model_validate_json(
+                        stdout.decode().read()
+                    )
+                ).model_dump_json()
+            )
 
 
 def set_minimum_time(datetime_str: str):
