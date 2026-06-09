@@ -238,7 +238,7 @@ class Kiosk(modules.Module):
                 program = ''
                 ${{pkgs.ungoogled-chromium}}/bin/chromium --kiosk --noerrdialogs --disable-infobars --app='{kiosk_url}'
                 '';
-                restartIfChanged = lib.mkOverride {priority} true;
             }};
+           systemd.services.cage-tty1.restartIfChanged = lib.mkOverride {priority} true;
         """.strip()
         )
