@@ -48,7 +48,7 @@ class Kiosk(modules.Module):
             en="Display rotation",
             de="Bildschirmrotation",
         ),
-        type=modules.SelectOneType(select_one=["0", "90", "180", "270"]),
+        type=modules.SelectOneType(select_one=["normal", "90", "180", "270"]),
         default="normal",
         description="xrandr rotation.",
         example="normal",
@@ -260,7 +260,7 @@ class Kiosk(modules.Module):
                after = [ "graphical-session.target" ];
                wantedBy = ["cage-tty1"];
                serviceConfig = {{
-                ExecStart ="${{pkgs.wlr-randr}}/bin/wlr-randr --output {xrandr_name} --transform {xrandr_rotation}";
+                ExecStart ="${{pkgs.wlr-randr}}/bin/wlr-randr --output {xrandr_name}" + "--transform {xrandr_rotation}" if xrandr_rotation != 'normal' else '';
                 }};
           }};
         """.strip()
