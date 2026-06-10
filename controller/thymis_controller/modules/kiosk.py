@@ -244,29 +244,34 @@ class Kiosk(modules.Module):
         f.write(
             f"""
             users.users.thymiskiosk = lib.mkOverride {priority} {{
-                isNormalUser = true;
-                createHome = true;
+              isNormalUser = true;
+              createHome = true;
             }};
-           services.cage = lib.mkOverride {priority} {{
+            services = {{
+              cage = lib.mkOverride {priority} {{
                 enable = true;
                 user = "thymiskiosk";
                 extraArguments = ["-d"];
                 program = ''
                 ${{pkgs.ungoogled-chromium}}/bin/chromium --kiosk --noerrdialogs --disable-infobars --app='{kiosk_url}'
                 '';
+              }};
+              udev.extraRules = ''
+                KERNEL=="event[0-9]", SUBSYSTEM=="input", ATTRS{{name}}=="Goodix Capacitive TouchScreen", ENV{WL_OUTPUT}="{xrandr_name}"
+                '';
             }};
-          systemd.services.screen-rotation = {{
-               enable = true;
-               after = [ "graphical.target" ];
-               wantedBy = ["cage-tty1.service"];
-               environment = {{
-                 XDG_RUNTIME_DIR = "/run/user/1001"; # thymiskiosk user is 1001, someday maybe make this not hardcoded
-                }};
-               serviceConfig = {{
-                 Type = "oneshot";
-                 User = "thymiskiosk";
-                  ExecStart ="${{pkgs.wlr-randr}}/bin/wlr-randr --output {xrandr_name} {f"--transform {xrandr_rotation}" if xrandr_rotation != "normal" else ""}";
-                }};
-          }};
+            systemd.services.screen-rotation = {{
+              enable = true;
+              after = [ "graphical.target" ];
+              wantedBy = ["cage-tty1.service"];
+              environment = {{
+                XDG_RUNTIME_DIR = "/run/user/1001"; # thymiskiosk user is 1001, someday maybe make this not hardcoded
+              }};
+              serviceConfig = {{
+                Type = "oneshot";
+                User = "thymiskiosk";
+                 ExecStart ="${{pkgs.wlr-randr}}/bin/wlr-randr --output {xrandr_name} {f"--transform {xrandr_rotation}" if xrandr_rotation != "normal" else ""}";
+               }};
+            }};
         """.strip()
         )
