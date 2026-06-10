@@ -277,6 +277,7 @@ class Kiosk(modules.Module):
                 ATTRS{{phys}}=="input/ts", ENV{{LIBINPUT_CALIBRATION_MATRIX}}="{udev_rotation}"
                 '';
             }};
+            systemd.services.cage-tty1.restartIfChanged = lib.mkForce true;
             systemd.services.screen-rotation = {{
               enable = true;
               after = [ "graphical.target" ];
