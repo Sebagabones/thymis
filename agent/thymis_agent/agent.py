@@ -227,7 +227,6 @@ class RelayToAgentMessage(BaseModel):
         "RtESwitchToNewConfigMessage",
         "RtESuccesfullySSHConnectedMessage",
         "RtESendSecretsMessage",
-        "RtEGetSystemGenerationsMessage",
     ] = Field(discriminator="kind")
 
 
@@ -259,10 +258,6 @@ class RtESendSecretsMessage(BaseModel):
     kind: Literal["send_secrets"] = "send_secrets"
     secrets: Dict[uuid.UUID, str]
     secret_infos: List[SecretForDevice]
-
-
-class RtEGetSystemGenerationsMessage(BaseModel):
-    kind: Literal["get_system_generations"] = "get_system_generations"
 
 
 class EdgeAgentToRelayStartMessage(ea.EtRStartMessage):
@@ -311,12 +306,11 @@ class Agent(ea.EdgeAgent):
                 self.signal_ssh_connected.set()
                 self.systemd_notifier.ready()
                 self.systemd_notifier.status("Connected to controller")
+                await self.send_system_generations()
             case RtEUpdatePublicKeyMessage():
                 self.update_public_key()
             case RtESendSecretsMessage():
                 self.place_secrets_on_message(message.inner)
-            case RtEGetSystemGenerationsMessage():
-                await self.send_system_generations()
             case RtESwitchToNewConfigMessage():
                 new_path_to_config = message.inner.new_path_to_config
                 current_config = os.readlink("/run/current-system")
@@ -504,10 +498,12 @@ class Agent(ea.EdgeAgent):
                             )
                         ).model_dump_json()
                     )
+                    send_generations = self.send_system_generations()
                     # wait a few seconds
                     await asyncio.sleep(2)
                     # restart agent using systemd
                     os.system("systemctl restart thymis-agent")
+                    await send_generations
 
                 asyncio.create_task(wait_for_reconnect_and_send_result())
 
