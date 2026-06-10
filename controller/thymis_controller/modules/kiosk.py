@@ -281,23 +281,27 @@ class Kiosk(modules.Module):
 
             systemd.services.reload-udev = {{
               enable = true;
-              before = [ "cage-tty1.service" ];
-              wantedBy = ["cage-tty1.service"];
-              partOf = ["cage-tty1.service"];
+              before   = [ "cage-tty1.service" ];
+              wantedBy = [ "cage-tty1.service" ];
+              partOf   = [ "cage-tty1.service" ];
               serviceConfig = {{
                 Type = "oneshot";
                 Restart="on-failure";
-                RestartSec="5";
                 RemainAfterExit=true;
-                ExecStartPre = "udevadm control --reload-rules";
-                ExecStart = "udevadm trigger";
-               }};
+                ExecStart = [
+                  "${{pkgs.systemd}}/bin/udevadm control --reload-rules"
+                  "${{pkgs.systemd}}/bin/udevadm trigger --action=add"
+                  "${{pkgs.systemd}}/bin/udevadm settle"
+                ];
+              }};
             }};
+
             systemd.services.screen-rotation = {{
               enable = true;
               after    = [ "cage-tty1.service" ];
+              wantedBy = [ "cage-tty1.service" ];
+              partOf   = [ "cage-tty1.service" ];
               bindsTo  = [ "cage-tty1.service" ];
-              partOf = ["cage-tty1.service"];
               environment = {{
                 XDG_RUNTIME_DIR = "/run/user/1001"; # thymiskiosk user is 1001, someday maybe make this not hardcoded
               }};
@@ -307,7 +311,16 @@ class Kiosk(modules.Module):
                 RestartSec="5";
                 RemainAfterExit=true;
                 User = "thymiskiosk";
-                 ExecStart ="${{pkgs.wlr-randr}}/bin/wlr-randr --output {xrandr_name} {wlr_randr_rotation}";
+                ExecStart = pkgs.writeShellScript "screen-rotate" ''
+                  for i in $(seq 1 50); do
+                    sock="$(ls "$XDG_RUNTIME_DIR"/wayland-[0-9] 2>/dev/null | head -n1)"
+                    if [ -n "$sock" ]; then break; fi
+                    sleep 0.2
+                 done
+                 if [ -z "$sock" ]; then echo "no wayland socket appeared"; exit 1; fi
+                 export WAYLAND_DISPLAY="$(basename "$sock")"
+                 exec ${{pkgs.wlr-randr}}/bin/wlr-randr --output {xrandr_name} {wlr_randr_rotation}
+               '';
                }};
             }};
             system.activationScripts.restart-display-manager-thymis = {{
