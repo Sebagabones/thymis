@@ -48,7 +48,7 @@ class Kiosk(modules.Module):
             en="Display rotation",
             de="Bildschirmrotation",
         ),
-        type=modules.SelectOneType(select_one=["normal", "90", "180", "270"]),
+        type=modules.SelectOneType(select_one=["normal", "left", "inverted", "right"]),
         default="normal",
         description="xrandr rotation.",
         example="normal",
@@ -146,12 +146,28 @@ class Kiosk(modules.Module):
             if "xrandr_mode" in module_settings.settings
             else self.xrandr_mode.default
         )
+        wlr_randr_rotation = ""
+        udev_rotation = "1 0 0 0 1 0"
+        match module_settings.settings["xrandr_rotation"]:
+            case "normal":
+                wlr_randr_rotation = ""
+                udev_rotation = "1 0 0 0 1 0"
+            case "left":
+                wlr_randr_rotation = "--transform 90"
+                udev_rotation = "0 -1 1 1 0 0"
+            case "inverted":
+                wlr_randr_rotation = "--transform 180"
+                udev_rotation = "-1 0 1 0 -1 1"
+            case "right":
+                wlr_randr_rotation = "--transform 270"
+                udev_rotation = "0 1 0 -1 0 1"
 
-        xrandr_rotation = (
-            module_settings.settings["xrandr_rotation"]
-            if "xrandr_rotation" in module_settings.settings
-            else self.xrandr_rotation.default
-        )
+        # xrandr_rotation = (
+        #     module_settings.settings["xrandr_rotation"]
+        #     if "xrandr_rotation" in module_settings.settings
+        #     else self.xrandr_rotation.default
+        # )
+
         xrandr_name = (
             module_settings.settings["xrandr_name"]
             if "xrandr_name" in module_settings.settings
@@ -258,7 +274,7 @@ class Kiosk(modules.Module):
               }};
               udev.extraRules = ''
                 KERNEL=="event[0-9]", SUBSYSTEM=="input", ATTRS{{phys}}=="input/ts", ENV{{WL_OUTPUT}}="{xrandr_name}"
-                ATTRS{{phys}}=="input/ts", ENV{{LIBINPUT_CALIBRATION_MATRIX}}="-1 0 1 0 -1 1"
+                ATTRS{{phys}}=="input/ts", ENV{{LIBINPUT_CALIBRATION_MATRIX}}="{udev_rotation}"
                 '';
             }};
             systemd.services.screen-rotation = {{
@@ -271,7 +287,7 @@ class Kiosk(modules.Module):
               serviceConfig = {{
                 Type = "oneshot";
                 User = "thymiskiosk";
-                 ExecStart ="${{pkgs.wlr-randr}}/bin/wlr-randr --output {xrandr_name} {f"--transform {xrandr_rotation}" if xrandr_rotation != "normal" else ""}";
+                 ExecStart ="${{pkgs.wlr-randr}}/bin/wlr-randr --output {xrandr_name} {wlr_randr_rotation}";
                }};
             }};
         """.strip()
