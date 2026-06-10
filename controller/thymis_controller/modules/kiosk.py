@@ -280,7 +280,7 @@ class Kiosk(modules.Module):
             systemd.services.cage-tty1.restartIfChanged = lib.mkForce true;
             systemd.services.screen-rotation = {{
               enable = true;
-              after = [ "cage-tty1.service" ];
+              after = [ "graphical.target" ];
               wantedBy = ["cage-tty1.service"];
               partOf = ["cage-tty1.service"];
               environment = {{
