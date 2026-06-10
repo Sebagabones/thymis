@@ -280,13 +280,15 @@ class Kiosk(modules.Module):
             systemd.services.cage-tty1.restartIfChanged = lib.mkForce true;
             systemd.services.screen-rotation = {{
               enable = true;
-              after = [ "graphical.target" ];
+              after = [ "cage-tty1.service" ];
               wantedBy = ["cage-tty1.service"];
+              partOf = ["cage-tty1.service"];
               environment = {{
                 XDG_RUNTIME_DIR = "/run/user/1001"; # thymiskiosk user is 1001, someday maybe make this not hardcoded
               }};
               serviceConfig = {{
                 Type = "oneshot";
+                RemainAfterExit=true;
                 User = "thymiskiosk";
                  ExecStart ="${{pkgs.wlr-randr}}/bin/wlr-randr --output {xrandr_name} {wlr_randr_rotation}";
                }};
