@@ -310,5 +310,16 @@ class Kiosk(modules.Module):
                  ExecStart ="${{pkgs.wlr-randr}}/bin/wlr-randr --output {xrandr_name} {wlr_randr_rotation}";
                }};
             }};
+            system.activationScripts.restart-display-manager-thymis = {{
+                supportsDryActivation = true;
+                text = ''
+                    mkdir -p /run/nixos
+                    if [ "$NIXOS_ACTION" != dry-activate ]; then
+                        echo cage-tty1.service > /run/nixos/activation-restart-list
+                    else
+                        echo cage-tty1.service > /run/nixos/dry-activation-restart-list
+                    fi
+                '';
+            }};
         """.strip()
         )
