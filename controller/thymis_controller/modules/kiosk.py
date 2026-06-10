@@ -257,7 +257,7 @@ class Kiosk(modules.Module):
                 '';
               }};
               udev.extraRules = ''
-                KERNEL=="event[0-9]", SUBSYSTEM=="input", ATTRS{{name}}=="Goodix Capacitive TouchScreen", ENV{WL_OUTPUT}="{xrandr_name}"
+                KERNEL=="event[0-9]", SUBSYSTEM=="input", ATTRS{{name}}=="Goodix Capacitive TouchScreen", ENV{{WL_OUTPUT}}="{xrandr_name}"
                 '';
             }};
             systemd.services.screen-rotation = {{
