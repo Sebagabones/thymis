@@ -278,7 +278,7 @@ class Kiosk(modules.Module):
                 '';
             }};
             systemd.services.cage-tty1.restartIfChanged = lib.mkForce true;
-            systemd.services.cage-tty1.serviceConfig.ExecPreStart = ''udevadm control --reload-rules && udevadm trigger'';
+            systemd.services.cage-tty1.serviceConfig.ExecStartPre = ''udevadm control --reload-rules && udevadm trigger'';
             systemd.services.screen-rotation = {{
               enable = true;
               after = [ "graphical.target" ];
