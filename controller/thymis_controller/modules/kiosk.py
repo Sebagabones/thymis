@@ -294,8 +294,8 @@ class Kiosk(modules.Module):
             }};
             systemd.services.screen-rotation = {{
               enable = true;
-              after = [ "graphical.target" ];
-              wantedBy = ["cage-tty1.service"];
+              after    = [ "cage-tty1.service" ];
+              bindsTo  = [ "cage-tty1.service" ];
               partOf = ["cage-tty1.service"];
               environment = {{
                 XDG_RUNTIME_DIR = "/run/user/1001"; # thymiskiosk user is 1001, someday maybe make this not hardcoded
