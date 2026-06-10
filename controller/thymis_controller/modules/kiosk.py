@@ -289,6 +289,8 @@ class Kiosk(modules.Module):
               }};
               serviceConfig = {{
                 Type = "oneshot";
+                Restart="on-failure";
+                RestartSec="5";
                 RemainAfterExit=true;
                 User = "thymiskiosk";
                  ExecStart ="${{pkgs.wlr-randr}}/bin/wlr-randr --output {xrandr_name} {wlr_randr_rotation}";
