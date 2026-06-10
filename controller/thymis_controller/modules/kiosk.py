@@ -258,7 +258,7 @@ class Kiosk(modules.Module):
               }};
               udev.extraRules = ''
                 KERNEL=="event[0-9]", SUBSYSTEM=="input", ATTRS{{phys}}=="input/ts", ENV{{WL_OUTPUT}}="{xrandr_name}"
-                ATTRS{{phys}}=="input/ts", ENV{LIBINPUT_CALIBRATION_MATRIX}="-1 0 1 0 -1 1"
+                ATTRS{{phys}}=="input/ts", ENV{{LIBINPUT_CALIBRATION_MATRIX}}="-1 0 1 0 -1 1"
                 '';
             }};
             systemd.services.screen-rotation = {{
