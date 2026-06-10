@@ -289,7 +289,8 @@ class Kiosk(modules.Module):
                 Restart="on-failure";
                 RestartSec="5";
                 RemainAfterExit=true;
-                ExecStart = ''udevadm control --reload-rules && udevadm trigger'';
+                ExecStartPre = "udevadm control --reload-rules";
+                ExecStart = "udevadm trigger";
                }};
             }};
             systemd.services.screen-rotation = {{
